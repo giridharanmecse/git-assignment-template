@@ -37,3 +37,7 @@ jobs:
       - name: Check pull request
         if: github.event_name == 'pull_request'
         run: echo "✅ Pull request detected!"
+
+      - name: Run Python Tests
+        run: python3 -m unittest tests/test_git_assignment.py
+
