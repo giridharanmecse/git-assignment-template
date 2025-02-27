@@ -1,0 +1,39 @@
+name: AutoEvaluate Git Assignment
+
+on: [push, pull_request]
+
+jobs:
+  grading:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check for feature branch
+        run: |
+          if ! git show-ref --quiet refs/heads/feature-branch; then
+            echo "❌ Feature branch is missing!" && exit 1
+          else
+            echo "✅ Feature branch found!"
+          fi
+
+      - name: Check for hello.txt
+        run: |
+          if [ ! -f "hello.txt" ]; then
+            echo "❌ hello.txt file is missing!" && exit 1
+          else
+            echo "✅ hello.txt file found!"
+          fi
+
+      - name: Check commit message
+        run: |
+          last_commit_message=$(git log -1 --pretty=%s)
+          if [[ "$last_commit_message" != "Added hello.txt" ]]; then
+            echo "❌ Commit message does not match!" && exit 1
+          else
+            echo "✅ Correct commit message!"
+          fi
+
+      - name: Check pull request
+        if: github.event_name == 'pull_request'
+        run: echo "✅ Pull request detected!"
